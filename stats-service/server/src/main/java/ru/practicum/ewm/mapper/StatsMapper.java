@@ -8,12 +8,12 @@ public class StatsMapper {
 
 
     public static HitModel toHitModel(Hit hit) {
-        return HitModel.builder()
-                .app(hit.getApp())
-                .uri(hit.getUri())
-                .ip(hit.getIp())
-                .created_date(hit.getTimestamp())
-                .build();
+        HitModel hitModel = new HitModel();
+        hitModel.setApp(hit.getApp());
+        hitModel.setIp(hit.getIp());
+        hitModel.setUri(hit.getUri());
+        hitModel.setCreatedDate(hit.getCreatedDate());
+        return hitModel;
 
     }
 }

@@ -28,5 +28,5 @@ public class HitModel {
     private String ip;
 
     @Column(name = "created_date", nullable = false)
-    private LocalDateTime created_date;
+    private LocalDateTime createdDate;
 }
