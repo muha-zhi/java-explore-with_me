@@ -35,7 +35,7 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - main-db
+      - ewm-db
       - stats-server
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://main-db:5432/main-db
