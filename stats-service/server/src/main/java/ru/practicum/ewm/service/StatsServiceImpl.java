@@ -24,7 +24,7 @@ public class StatsServiceImpl implements StatsService {
     @Override
     public List<StatsModel> getListStats(StatsRequest request) {
 
-        if(request.getStart() == null || request.getEnd() == null) {
+        if (request.getStart() == null || request.getEnd() == null) {
             throw new InvalidParameterException("Start and end dates cannot be null");
         }
 
