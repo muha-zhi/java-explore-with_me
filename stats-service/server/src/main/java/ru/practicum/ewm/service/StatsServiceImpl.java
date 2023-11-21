@@ -32,10 +32,19 @@ public class StatsServiceImpl implements StatsService {
             throw new InvalidParameterException("Start date must be before end date");
         }
 
+        if (request.getUris().isEmpty()) {
+            if (request.isUnique()) {
+                return statRepository.getUniqueStatsWithoutUri(request.getStart(), request.getEnd());
+            } else {
+                return statRepository.getStatsWithoutUri(request.getStart(), request.getEnd());
+            }
+        }
+
         if (request.isUnique()) {
             return statRepository.getUniqueStats(request.getStart(), request.getEnd(), request.getUris());
         }
 
         return statRepository.getStats(request.getStart(), request.getEnd(), request.getUris());
     }
+
 }
