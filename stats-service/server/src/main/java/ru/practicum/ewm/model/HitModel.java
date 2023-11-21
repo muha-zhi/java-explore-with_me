@@ -18,15 +18,15 @@ public class HitModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(name = "app")
     private String app;
 
-    @Column(nullable = false)
+    @Column(name = "uri")
     private String uri;
 
-    @Column(nullable = false)
+    @Column(name = "ip")
     private String ip;
 
-    @Column(name = "created_date", nullable = false)
+    @Column(name = "created_date")
     private LocalDateTime createdDate;
 }
