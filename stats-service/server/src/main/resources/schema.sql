@@ -1,0 +1,10 @@
+DROP TABLE IF EXISTS stats cascade ;
+
+CREATE TABLE IF NOT EXISTS stats
+(
+    id      BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY UNIQUE,
+    app     VARCHAR(255),
+    uri     VARCHAR(255),
+    ip      VARCHAR(255),
+    created_date TIMESTAMP WITHOUT TIME ZONE
+    );
