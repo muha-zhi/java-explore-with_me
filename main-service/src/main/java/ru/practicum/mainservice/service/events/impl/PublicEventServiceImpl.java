@@ -47,13 +47,17 @@ public class PublicEventServiceImpl implements PublicEventService {
                                             Boolean onlyAvailable,
                                             EventRequestSort sort,
                                             Integer from,
-                                            Integer size) {
+                                            Integer size,
+                                            String ip,
+                                            String uri) {
 
         validateRangeDates(rangeStart, rangeEnd);
+
 
         log.info("GET text: {}, categories: {}, paid: {}, rangeStart: {}, rangeEnd: {}, onlyAvailable: {}, sort: {}, from: {}, size: {}",
                 text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
 
+        statsClient.postStats(HitMapper.mapEventtoHit(ip, uri));
         return getEventsFromDb(text,
                 categories,
                 paid,

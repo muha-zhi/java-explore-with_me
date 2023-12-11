@@ -17,7 +17,9 @@ public interface PublicEventService {
                                      Boolean onlyAvailable,
                                      EventRequestSort sort,
                                      Integer from,
-                                     Integer size);
+                                     Integer size,
+                                     String ip,
+                                     String uri);
 
 
     EventDto getEventInfo(Long id, String ip, String uri);

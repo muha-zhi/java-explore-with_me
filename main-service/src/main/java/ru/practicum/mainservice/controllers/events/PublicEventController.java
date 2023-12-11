@@ -34,7 +34,8 @@ public class PublicEventController {
                                             @RequestParam(defaultValue = "false") Boolean onlyAvailable,
                                             @RequestParam(defaultValue = "EVENT_DATE") EventRequestSort sort,
                                             @RequestParam(value = "from", defaultValue = "0") @Min(0) int from,
-                                            @RequestParam(value = "size", defaultValue = "10") @Positive int size) {
+                                            @RequestParam(value = "size", defaultValue = "10") @Positive int size,
+                                            HttpServletRequest request) {
         log.info("GET TEXT: {}, CATEGORIES: {}, PAID: {}, RANGE_START: {}, RANGE_END: {}, ONLY_AVAILABLE: {}, SORT: {}, FROM: {}, SIZE: {}",
                 text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
 
@@ -46,7 +47,9 @@ public class PublicEventController {
                 onlyAvailable,
                 sort,
                 from,
-                size);
+                size,
+                request.getRemoteAddr(),
+                request.getRequestURI());
     }
 
     @GetMapping("/events/{id}")
