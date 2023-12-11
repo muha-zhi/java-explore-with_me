@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.Hit;
 import ru.practicum.ewm.StatsRequest;
 import ru.practicum.ewm.ViewStats;
-import ru.practicum.ewm.model.StatsModel;
 import ru.practicum.ewm.service.StatsService;
 
 import java.time.LocalDateTime;

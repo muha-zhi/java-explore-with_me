@@ -4,7 +4,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import ru.practicum.ewm.ViewStats;
 import ru.practicum.ewm.model.HitModel;
-import ru.practicum.ewm.model.StatsModel;
 
 import java.time.LocalDateTime;
 import java.util.List;
