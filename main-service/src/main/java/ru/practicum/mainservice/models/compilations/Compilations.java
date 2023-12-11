@@ -28,8 +28,8 @@ public class Compilations {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof CompilationEvent)) return false;
-        return id != null && id.equals(((CompilationEvent) o).getId());
+        if (!(o instanceof Compilations)) return false;
+        return id != null && id.equals(((Compilations) o).getId());
     }
 
     @Override

@@ -1,7 +1,6 @@
 package ru.practicum.mainservice.models.users;
 
 import lombok.*;
-import ru.practicum.mainservice.models.category.Category;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -31,8 +30,8 @@ public class User {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Category)) return false;
-        return id != null && id.equals(((Category) o).getId());
+        if (!(o instanceof User)) return false;
+        return id != null && id.equals(((User) o).getId());
     }
 
     @Override

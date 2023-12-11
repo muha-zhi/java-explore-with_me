@@ -261,8 +261,6 @@ public class PrivateEventServiceImpl implements PrivateEventService {
         request.setStatus(RequestStatus.CONFIRMED);
         requestRepository.save(request);
 
-        RequestMapper.mapRequestToRequestDto(request);
-
         return RequestMapper.mapRequestToRequestDto(request);
     }
 
