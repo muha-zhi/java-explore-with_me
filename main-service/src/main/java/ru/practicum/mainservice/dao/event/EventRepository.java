@@ -1,6 +1,7 @@
 package ru.practicum.mainservice.dao.event;
 
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -21,7 +22,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             " and e.eventDate between :rangeStart and :rangeEnd " +
             " and e.category.id in :categories " +
             " and e.participantLimit < e.confirmedRequests " +
-            " and e.paid = :paid " +
+            " and (:paid is null or e.paid = :paid) " +
             " and e.state = :state " +
             " order by e.eventDate desc")
     List<Event> getAllEventsByTitleOnlyAvailableIsTrue(String text,
@@ -36,7 +37,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             " where ((lower(e.description) like lower(concat('%', :text, '%'))) or (lower(e.annotation) like lower(concat('%', :text, '%'))))" +
             " and e.eventDate between :rangeStart and :rangeEnd " +
             " and e.category.id in :categories " +
-            " and e.paid = :paid " +
+            " and (:paid is null or e.paid = :paid) " +
             " and e.state = :state " +
             " order by e.eventDate desc")
     List<Event> getAllEventsByTitleOnlyAvailableIsFalse(String text,
@@ -52,7 +53,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             " where ((lower(e.description) like lower(concat('%', :text, '%'))) or (lower(e.annotation) like lower(concat('%', :text, '%'))))" +
             " and e.eventDate > :date " +
             " and e.category.id in :categories " +
-            " and e.paid = :paid " +
+            " and (:paid is null or e.paid = :paid) " +
             " and e.state = :state " +
             " order by e.eventDate desc")
     List<Event> getAllEventsByTitleOnlyAvailableIsFalseWithoutDates(String text,
@@ -60,22 +61,22 @@ public interface EventRepository extends JpaRepository<Event, Long> {
                                                                     List<Long> categories,
                                                                     Boolean paid,
                                                                     EventState state,
-                                                                    PageRequest pageRequest);
+                                                                    Pageable pageable);
 
     @Query("select e from Event e " +
             " where ((lower(e.description) like lower(concat('%', :text, '%'))) or (lower(e.annotation) like lower(concat('%', :text, '%'))))" +
-            " and e.eventDate > :date " +
+            " and e.eventDate >= :date " +
             " and e.category.id in :categories " +
             " and e.participantLimit < e.confirmedRequests " +
             " and e.state = :state " +
-            " and e.paid = :paid " +
+            " and (:paid is null or e.paid = :paid) " +
             " order by e.eventDate desc")
     List<Event> getAllEventsByTitleOnlyAvailableIsTrueWithoutDates(String text,
                                                                    LocalDateTime date,
                                                                    List<Long> categories,
                                                                    Boolean paid,
                                                                    EventState state,
-                                                                   PageRequest pageRequest);
+                                                                   Pageable pageRequest);
 
     List<Event> findAllByInitiator(User initiator, PageRequest pageRequest);
 

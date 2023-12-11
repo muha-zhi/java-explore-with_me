@@ -69,6 +69,7 @@ public class AdminEventServiceImpl implements AdminEventService {
 
                     validateEventState(patchingEvent);
                     patchingEvent.setState(EventState.PUBLISHED);
+                    patchingEvent.setPublishedOn(LocalDateTime.now());
 
                     break;
                 case REJECT_EVENT:

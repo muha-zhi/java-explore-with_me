@@ -28,10 +28,10 @@ public class PublicEventController {
     @GetMapping("/events")
     public List<ShortEventDto> getAllEvents(@RequestParam(defaultValue = "") String text,
                                             @RequestParam(required = false) List<Long> categories,
-                                            @RequestParam(defaultValue = "false") boolean paid,
+                                            @RequestParam(required = false) Boolean paid,
                                             @RequestParam(required = false) LocalDateTime rangeStart,
                                             @RequestParam(required = false) LocalDateTime rangeEnd,
-                                            @RequestParam(defaultValue = "false") boolean onlyAvailable,
+                                            @RequestParam(defaultValue = "false") Boolean onlyAvailable,
                                             @RequestParam(defaultValue = "EVENT_DATE") EventRequestSort sort,
                                             @RequestParam(value = "from", defaultValue = "0") @Min(0) int from,
                                             @RequestParam(value = "size", defaultValue = "10") @Positive int size) {
