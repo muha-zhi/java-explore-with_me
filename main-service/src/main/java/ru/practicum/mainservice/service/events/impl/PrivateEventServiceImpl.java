@@ -250,7 +250,7 @@ public class PrivateEventServiceImpl implements PrivateEventService {
     }
 
     private void validateEvent(Event event) {
-        if (event.getConfirmedRequests() == event.getParticipantLimit()) {
+        if (event.getConfirmedRequests().longValue() == event.getParticipantLimit().longValue()) {
             throw new ConflictRequestException("Событие заполнено");
         }
     }
