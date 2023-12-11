@@ -1,2 +1,6 @@
-package ru.practicum.mainservice.enums;public class PrivateStateAction {
+package ru.practicum.mainservice.enums;
+
+public enum PrivateStateAction {
+    SEND_TO_REVIEW,
+    CANCEL_REVIEW
 }

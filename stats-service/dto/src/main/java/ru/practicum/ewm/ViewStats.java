@@ -1,13 +1,13 @@
 package ru.practicum.ewm;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
 
 
 @Getter
 @AllArgsConstructor
 @ToString
+@Data
+@NoArgsConstructor
 public class ViewStats {
     private String app;
     private String uri;

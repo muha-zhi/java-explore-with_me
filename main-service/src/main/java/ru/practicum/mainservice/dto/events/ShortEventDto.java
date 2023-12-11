@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ShortPublicEventDto {
+public class ShortEventDto {
     Long id;
     String annotation;
     CategoryDto category;

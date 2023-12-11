@@ -1,2 +1,39 @@
-package ru.practicum.mainservice.models.compilations;public class Compilation {
+package ru.practicum.mainservice.models.compilations;
+
+
+import lombok.*;
+
+import javax.persistence.*;
+
+@Entity
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@Table(name = "compilations")
+public class Compilations {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "title")
+    private String title;
+
+    @Column(name = "pinned")
+    private Boolean pinned;
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof CompilationEvent)) return false;
+        return id != null && id.equals(((CompilationEvent) o).getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }

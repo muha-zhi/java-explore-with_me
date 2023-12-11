@@ -1,2 +1,6 @@
-package ru.practicum.mainservice.enums;public class EventRequestSort {
+package ru.practicum.mainservice.enums;
+
+public enum EventRequestSort {
+    EVENT_DATE,
+    VIEWS
 }

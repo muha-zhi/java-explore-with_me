@@ -1,4 +1,4 @@
-package ru.practicum.shareit.exception;
+package ru.practicum.mainservice.exceptions;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -21,22 +21,9 @@ public class ErrorHandler {
         return new ErrorResponse("Ошибка поиска", e.getMessage());
     }
 
-    @ExceptionHandler(WrongOwnerException.class)
-    @ResponseStatus(HttpStatus.FORBIDDEN)
-    public ErrorResponse handleNegativeCount(final WrongOwnerException e) {
-        return new ErrorResponse("Ошибка запроса", e.getMessage());
-    }
-
     @ExceptionHandler(ConstraintViolationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse validationErrorHandler(final ConstraintViolationException e) {
-        log.debug("Получен статус 400 BAD REQUEST {}", e.getMessage(), e);
-        return new ErrorResponse("Ошибка валидации", e.getMessage());
-    }
-
-    @ExceptionHandler(BookingException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse validationErrorHandler(final BookingException e) {
         log.debug("Получен статус 400 BAD REQUEST {}", e.getMessage(), e);
         return new ErrorResponse("Ошибка валидации", e.getMessage());
     }
@@ -48,10 +35,10 @@ public class ErrorHandler {
         return Map.of("error", e.getMessage());
     }
 
-    @ExceptionHandler(BookingDataException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Map<String, String> notFoundBookingErrorHandler(final BookingDataException e) {
-        log.debug("Получен статус 404 BAD REQUEST {}", e.getMessage(), e);
+    @ExceptionHandler(ConflictRequestException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public Map<String, String> validationErrorHandler(final ConflictRequestException e) {
+        log.debug("Получен статус 409 CONFLICT {}", e.getMessage(), e);
         return Map.of("error", e.getMessage());
     }
 

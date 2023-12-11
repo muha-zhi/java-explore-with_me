@@ -19,9 +19,15 @@ public class CompilationEvent {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @JoinColumn(name = "event_id")
     private Event event;
 
-    private C
+    @ManyToOne(fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @JoinColumn(name = "compilation_id")
+    private Compilations completions;
 
     @Override
     public boolean equals(Object o) {

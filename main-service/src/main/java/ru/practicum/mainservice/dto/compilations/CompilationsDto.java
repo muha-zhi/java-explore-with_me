@@ -1,15 +1,18 @@
-package ru.practicum.mainservice.dto;
+package ru.practicum.mainservice.dto.compilations;
 
-import jdk.jfr.DataAmount;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.practicum.mainservice.dto.events.ShortEventDto;
+
+import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ResponseCompilationsDto {
+public class CompilationsDto {
     private Long id;
-
-    private 
+    private List<ShortEventDto> events;
+    private boolean pinned;
+    private String title;
 }

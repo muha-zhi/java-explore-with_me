@@ -1,2 +1,8 @@
-package ru.practicum.mainservice.enums;public class RequestStatus {
+package ru.practicum.mainservice.enums;
+
+public enum RequestStatus {
+    CONFIRMED,
+    CANCELED,
+    PENDING,
+    REJECTED
 }
