@@ -5,23 +5,32 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.mainservice.dao.comment.CommentRepository;
 import ru.practicum.mainservice.dao.event.EventRepository;
 import ru.practicum.mainservice.dao.location.LocationRepository;
 import ru.practicum.mainservice.dto.events.AdminPatchEventDto;
 import ru.practicum.mainservice.dto.events.EventDto;
 import ru.practicum.mainservice.enums.EventState;
 import ru.practicum.mainservice.exceptions.ConflictRequestException;
+import ru.practicum.mainservice.mapper.comment.CommentMapper;
 import ru.practicum.mainservice.mapper.event.EventMapper;
 import ru.practicum.mainservice.models.category.Category;
+import ru.practicum.mainservice.models.comment.Comment;
 import ru.practicum.mainservice.models.events.Event;
 import ru.practicum.mainservice.models.location.Location;
 import ru.practicum.mainservice.service.category.PublicCategoryService;
+import ru.practicum.mainservice.service.comment.CommentService;
 import ru.practicum.mainservice.service.events.AdminEventService;
 import ru.practicum.mainservice.service.events.PrivateEventService;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
 
 
 @Service
@@ -38,6 +47,10 @@ public class AdminEventServiceImpl implements AdminEventService {
 
     private final LocationRepository locationRepository;
 
+    private final CommentRepository commentRepository;
+
+    private final CommentService commentService;
+
 
     @Override
     public List<EventDto> getAllEvents(List<Long> users, List<EventState> states, List<Long> categories, LocalDateTime rangeStart, LocalDateTime rangeEnd, int from, int size) {
@@ -53,8 +66,11 @@ public class AdminEventServiceImpl implements AdminEventService {
         log.info("GET users: {}, states: {}, categories: {}, rangeStart: {}, rangeEnd: {}, from: {}, size: {}",
                 users, states, categories, rangeStart, rangeEnd, from, size);
 
+        Map<Long, List<Comment>> comments = commentRepository.findAllByEventInOrderByCreatedDesc(forReturn).stream()
+                .collect(groupingBy(commentsDto -> commentsDto.getEvent().getId(), toList()));
+
         return forReturn.stream()
-                .map(EventMapper::mapEventToEventDto)
+                .map(event -> EventMapper.mapEventToEventDto(event, CommentMapper.toCommentReturnDtoList(comments.getOrDefault(event.getId(), new ArrayList<>()))))
                 .collect(Collectors.toList());
     }
 
@@ -125,8 +141,16 @@ public class AdminEventServiceImpl implements AdminEventService {
             patchingEvent.setTitle(adminPatchEventDto.getTitle());
         }
 
-        return EventMapper.mapEventToEventDto(eventRepository.save(patchingEvent));
+        List<Comment> comments = commentRepository.findAllByEvent(patchingEvent);
 
+        return EventMapper.mapEventToEventDto(eventRepository.save(patchingEvent), CommentMapper.toCommentReturnDtoList(comments));
+
+    }
+
+    @Override
+    public void deleteComment(Long commentId) {
+        Comment comment = commentService.getCommentIfExist(commentId);
+        commentRepository.delete(comment);
     }
 
 

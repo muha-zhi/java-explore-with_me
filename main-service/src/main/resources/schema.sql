@@ -1,6 +1,7 @@
 drop table if exists compilations_events;
 drop table if exists compilations;
 drop table if exists requests;
+drop table if exists comments;
 drop table if exists events;
 drop table if exists locations;
 drop table if exists category;
@@ -78,4 +79,15 @@ CREATE TABLE IF NOT EXISTS compilations_events
     compilation_id BIGINT,
     CONSTRAINT fk_compilations_events_to_events FOREIGN KEY (event_id) REFERENCES events (id) ON DELETE CASCADE,
     CONSTRAINT fk_compilations_events_to_compilations FOREIGN KEY (compilation_id) REFERENCES compilations (id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS comments
+(
+    id           BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    text         varchar(2000),
+    event_id      BIGINT,
+    author_id    BIGINT,
+    created_date TIMESTAMP WITHOUT TIME ZONE,
+    CONSTRAINT fk_comments_to_items FOREIGN KEY (event_id) REFERENCES events (id),
+    CONSTRAINT fk_comments_to_users FOREIGN KEY (author_id) REFERENCES users (id)
 );
