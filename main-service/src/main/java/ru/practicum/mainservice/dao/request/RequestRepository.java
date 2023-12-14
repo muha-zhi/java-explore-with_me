@@ -33,4 +33,14 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
     Optional<Request> findByRequesterAndEvent(User requester, Event event);
 
     List<Request> findAllByRequesterOrderByCreatedDesc(User requester);
+
+
+    @Query(" SELECT r " +
+            "FROM Request r " +
+            " JOIN FETCH r.event e " +
+            " JOIN FETCH r.requester re " +
+            " WHERE e = :event " +
+            " AND  re = :requester " +
+            " AND r.status = 'CONFIRMED' ")
+    Optional<Request> findByRequesterAndEventAndStatus(User requester, Event event);
 }

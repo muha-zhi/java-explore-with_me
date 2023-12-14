@@ -8,15 +8,18 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.StatsClient;
 import ru.practicum.ewm.ViewStats;
 import ru.practicum.mainservice.dao.category.CategoryRepository;
+import ru.practicum.mainservice.dao.comment.CommentRepository;
 import ru.practicum.mainservice.dao.event.EventRepository;
 import ru.practicum.mainservice.dto.events.EventDto;
 import ru.practicum.mainservice.dto.events.ShortEventDto;
 import ru.practicum.mainservice.enums.EventRequestSort;
 import ru.practicum.mainservice.enums.EventState;
 import ru.practicum.mainservice.exceptions.DataNotFoundException;
+import ru.practicum.mainservice.mapper.comment.CommentMapper;
 import ru.practicum.mainservice.mapper.event.EventMapper;
 import ru.practicum.mainservice.mapper.hit.HitMapper;
 import ru.practicum.mainservice.models.category.Category;
+import ru.practicum.mainservice.models.comment.Comment;
 import ru.practicum.mainservice.models.events.Event;
 import ru.practicum.mainservice.service.events.PublicEventService;
 
@@ -36,6 +39,8 @@ public class PublicEventServiceImpl implements PublicEventService {
     private final StatsClient statsClient;
 
     private final CategoryRepository categoryRepository;
+
+    private final CommentRepository commentRepository;
 
 
     @Override
@@ -58,6 +63,7 @@ public class PublicEventServiceImpl implements PublicEventService {
                 text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
 
         statsClient.postStats(HitMapper.mapEventtoHit(ip, uri));
+
         return getEventsFromDb(text,
                 categories,
                 paid,
@@ -80,7 +86,9 @@ public class PublicEventServiceImpl implements PublicEventService {
 
         log.info("GET id: {}, ip: {}, uri: {}", id, ip, uri);
 
-        return EventMapper.mapEventToEventDto(event);
+        List<Comment> comments = commentRepository.findAllByEvent(event);
+
+        return EventMapper.mapEventToEventDto(event, CommentMapper.toCommentReturnDtoList(comments));
 
     }
 

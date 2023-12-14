@@ -18,4 +18,6 @@ public interface AdminEventService {
 
     EventDto patchEvent(Long eventId,
                         AdminPatchEventDto adminPatchEventDto);
+
+    void deleteComment(Long commentId);
 }

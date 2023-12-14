@@ -2,6 +2,7 @@ package ru.practicum.mainservice.controllers.events;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.mainservice.dto.events.AdminPatchEventDto;
@@ -51,6 +52,15 @@ public class AdminEventController {
 
         return eventService.patchEvent(eventId,
                 adminPatchEventDto);
+    }
+
+    @DeleteMapping("/admin/comments/{commentId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteComment(@PathVariable Long commentId) {
+
+        log.info("DELETE COMMENTID: {}", commentId);
+
+        eventService.deleteComment(commentId);
     }
 
 

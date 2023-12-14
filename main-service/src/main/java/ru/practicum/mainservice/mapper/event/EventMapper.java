@@ -1,5 +1,6 @@
 package ru.practicum.mainservice.mapper.event;
 
+import ru.practicum.mainservice.dto.comment.CommentReturnDto;
 import ru.practicum.mainservice.dto.events.EventDto;
 import ru.practicum.mainservice.dto.events.NewEventDto;
 import ru.practicum.mainservice.dto.events.ShortEventDto;
@@ -13,6 +14,7 @@ import ru.practicum.mainservice.models.location.Location;
 import ru.practicum.mainservice.models.users.User;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class EventMapper {
 
@@ -40,7 +42,7 @@ public class EventMapper {
 
     }
 
-    public static EventDto mapEventToEventDto(Event event) {
+    public static EventDto mapEventToEventDto(Event event, List<CommentReturnDto> commentsDto) {
 
         EventDto eventDto = new EventDto();
         eventDto.setId(event.getId());
@@ -60,6 +62,7 @@ public class EventMapper {
         eventDto.setInitiator(UserMapper.mapToUserDto(event.getInitiator()));
         eventDto.setCategory(CategoryMapper.categoryToCategoryDto(event.getCategory()));
         eventDto.setViews(event.getViews());
+        eventDto.setComments(commentsDto);
 
         return eventDto;
     }

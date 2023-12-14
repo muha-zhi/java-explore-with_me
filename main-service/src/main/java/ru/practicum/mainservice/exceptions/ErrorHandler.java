@@ -12,7 +12,7 @@ import java.util.Map;
 
 
 @Slf4j
-@RestControllerAdvice
+@RestControllerAdvice(basePackages = "ru.practicum.mainservice")
 public class ErrorHandler {
 
     @ExceptionHandler(DataNotFoundException.class)
