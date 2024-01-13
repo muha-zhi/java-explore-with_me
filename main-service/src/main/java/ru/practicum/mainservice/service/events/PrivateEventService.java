@@ -1,5 +1,7 @@
 package ru.practicum.mainservice.service.events;
 
+import ru.practicum.mainservice.dto.comment.CommentDto;
+import ru.practicum.mainservice.dto.comment.CommentReturnDto;
 import ru.practicum.mainservice.dto.events.EventDto;
 import ru.practicum.mainservice.dto.events.NewEventDto;
 import ru.practicum.mainservice.dto.events.PrivatePatchEventDto;
@@ -7,6 +9,7 @@ import ru.practicum.mainservice.dto.request.ChangeStatusRequestDto;
 import ru.practicum.mainservice.dto.request.ConfirmedRejectedRequests;
 import ru.practicum.mainservice.dto.request.RequestDto;
 import ru.practicum.mainservice.models.events.Event;
+import ru.practicum.mainservice.models.users.User;
 
 import java.util.List;
 
@@ -33,4 +36,11 @@ public interface PrivateEventService {
                                                   ChangeStatusRequestDto changeStatusRequestDto);
 
     Event getEventIfExist(Long eventId);
+
+
+    CommentReturnDto createComment(Long userId,
+                                   Long eventId,
+                                   CommentDto commentDto);
+
+    void validComment(User commentator, Event event);
 }

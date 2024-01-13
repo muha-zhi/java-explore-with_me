@@ -6,9 +6,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.mainservice.dao.category.CategoryRepository;
+import ru.practicum.mainservice.dao.comment.CommentRepository;
 import ru.practicum.mainservice.dao.event.EventRepository;
 import ru.practicum.mainservice.dao.location.LocationRepository;
 import ru.practicum.mainservice.dao.request.RequestRepository;
+import ru.practicum.mainservice.dto.comment.CommentDto;
+import ru.practicum.mainservice.dto.comment.CommentReturnDto;
 import ru.practicum.mainservice.dto.events.EventDto;
 import ru.practicum.mainservice.dto.events.NewEventDto;
 import ru.practicum.mainservice.dto.events.PrivatePatchEventDto;
@@ -20,10 +23,12 @@ import ru.practicum.mainservice.enums.PrivateStateAction;
 import ru.practicum.mainservice.enums.RequestStatus;
 import ru.practicum.mainservice.exceptions.ConflictRequestException;
 import ru.practicum.mainservice.exceptions.DataNotFoundException;
+import ru.practicum.mainservice.mapper.comment.CommentMapper;
 import ru.practicum.mainservice.mapper.event.EventMapper;
 import ru.practicum.mainservice.mapper.location.LocationMapper;
 import ru.practicum.mainservice.mapper.request.RequestMapper;
 import ru.practicum.mainservice.models.category.Category;
+import ru.practicum.mainservice.models.comment.Comment;
 import ru.practicum.mainservice.models.events.Event;
 import ru.practicum.mainservice.models.location.Location;
 import ru.practicum.mainservice.models.requests.Request;
@@ -35,7 +40,10 @@ import ru.practicum.mainservice.service.user.AdminUserService;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
+
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
 
 
 @Slf4j
@@ -56,6 +64,8 @@ public class PrivateEventServiceImpl implements PrivateEventService {
 
     private final PublicCategoryService publicCategoryService;
 
+    private final CommentRepository commentRepository;
+
 
     @Override
     public EventDto getEventInfo(Long userId, Long eventId) {
@@ -64,7 +74,9 @@ public class PrivateEventServiceImpl implements PrivateEventService {
 
         log.info("GET userId: {}, eventId: {}", userId, eventId);
 
-        return EventMapper.mapEventToEventDto(eventFromDb);
+        List<Comment> comments = commentRepository.findAllByEvent(eventFromDb);
+
+        return EventMapper.mapEventToEventDto(eventFromDb, CommentMapper.toCommentReturnDtoList(comments));
     }
 
     @Transactional
@@ -134,7 +146,10 @@ public class PrivateEventServiceImpl implements PrivateEventService {
             patchingEvent.setTitle(privatePatchEventDto.getTitle());
         }
 
-        return EventMapper.mapEventToEventDto(eventRepository.save(patchingEvent));
+        List<Comment> comments = commentRepository.findAllByEvent(patchingEvent);
+
+
+        return EventMapper.mapEventToEventDto(eventRepository.save(patchingEvent), CommentMapper.toCommentReturnDtoList(comments));
     }
 
     @Override
@@ -144,8 +159,13 @@ public class PrivateEventServiceImpl implements PrivateEventService {
 
         List<Event> events = eventRepository.findAllByInitiator(initiator, PageRequest.of(from / size, size));
 
-        return events.stream().map(EventMapper::mapEventToEventDto)
-                .collect(Collectors.toList());
+        Map<Long, List<Comment>> comments = commentRepository.findAllByEventInOrderByCreatedDesc(events).stream()
+                .collect(groupingBy(commentsDto -> commentsDto.getEvent().getId(), toList()));
+
+        return events.stream()
+                .map(event -> EventMapper.mapEventToEventDto(event,
+                        CommentMapper.toCommentReturnDtoList(comments.getOrDefault(event.getId(), new ArrayList<>()))))
+                .collect(toList());
     }
 
     @Transactional
@@ -165,7 +185,7 @@ public class PrivateEventServiceImpl implements PrivateEventService {
 
         log.info("Пользователь {} создал событие {}", user.getName(), newEventDto.getTitle());
 
-        return EventMapper.mapEventToEventDto(event);
+        return EventMapper.mapEventToEventDto(event, CommentMapper.toCommentReturnDtoList(new ArrayList<>()));
     }
 
     @Override
@@ -179,7 +199,7 @@ public class PrivateEventServiceImpl implements PrivateEventService {
 
         return requests.stream()
                 .map(RequestMapper::mapRequestToRequestDto)
-                .collect(Collectors.toList());
+                .collect(toList());
 
     }
 
@@ -240,6 +260,38 @@ public class PrivateEventServiceImpl implements PrivateEventService {
     @Override
     public Event getEventIfExist(Long eventId) {
         return eventRepository.findById(eventId).orElseThrow(() -> new DataNotFoundException("Event not found"));
+    }
+
+    @Transactional
+    @Override
+    public CommentReturnDto createComment(Long userId, Long eventId, CommentDto commentDto) {
+
+        User author = adminUserService.getUserIfExist(userId);
+
+        Event event = getEventIfExist(eventId);
+
+        validEventForPublic(event);
+
+        validComment(author, event);
+
+        Comment forRet = commentRepository.save(CommentMapper.toComment(commentDto, event, author));
+
+        log.info("Пользователь {} оставил комментарий к событию {}", author.getName(), event.getTitle());
+
+        return CommentMapper.toCommentReturnDto(forRet);
+    }
+
+
+    @Override
+    public void validComment(User commentator, Event event) {
+        requestRepository.findByRequesterAndEventAndStatus(commentator,
+                event).orElseThrow(() -> new ConflictRequestException(" Нельзя оставлять комментарии к не подтвержденному событию"));
+    }
+
+    private void validEventForPublic(Event event) {
+        if (!event.getState().equals(EventState.PUBLISHED)) {
+            throw new ConflictRequestException("The event has already been published");
+        }
     }
 
 
